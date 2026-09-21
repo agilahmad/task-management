@@ -1,0 +1,263 @@
+{
+    "info": {
+        "name": "Task Management",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "adminToken",
+            "value": ""
+        },
+        {
+            "key": "userToken",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/register",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n \"name\": \"Admin Baru\",\n \"email\": \"admin@example.com\", \n \"password\": \"password123\", \n \"role\": \"admin\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/register",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n \"name\": \"User Baru\",\n \"email\": \"user@example.com\",\n \"password\": \"password123\", \n \"role\": \"admin\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Login Admin (seeder)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                            "exec": [
+                                    "const body = pm.response.json();",
+                                    "pm.collectionVariables.set('adminToken', body.accessToken);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/login",
+                        "body": {
+                            "mode": "raw",
+                            "raw":"{\n \"email\": \"admin@example.com\", \n \"password\": \"password123\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Login User (seeder)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const body = pm.response.json();",
+                                    "pm.collectionVariables.set('userToken', body.accessToken);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/login",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n \"email\": \"user@example.com\", \n \"password\": \"password123\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Projects",
+            "item": [
+                {
+                    "name": "Create Project (admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/projects",
+                        "body": {
+                            "mode": "raw",
+                            "raw":"{\n \"name\": \"Mobile App\",\n \"description\": \"Project baru untuk test Postman\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get Project",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value":"Bearer {{userToken}}"
+                            }
+                        ],
+                        "url":"{{baseUrl}}/projects"
+                    }
+                },
+                {
+                    "name": "Get Project Detail (admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value":"Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/projects/1"
+                    }
+                },
+                {
+                    "name": "Update Project (admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value":"Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/projects/1",
+                        "body": {
+                            "mode": "raw",
+                            "raw":"{\n \"description\": \"Deskripsi diperbaharui untuk test Postman\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Project (admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value":"Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/projects/1"
+                    }
+                },
+                {
+                    "name": "Get Tasks in Project",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{userToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/projects/1/tasks"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "AI Command",
+            "item": [
+                {
+                    "name": "Create + Update Task via AI",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value":"Bearer {{userToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/ai/command",
+                        "body": {
+                            "mode": "raw",
+                            "raw":"{\n \"prompt\": \"Tolong buatkan task baru di project ID 1 dengan judul 'Fix Login Bug', assign ke user ID 2. Terus sekalian ubah status task ID 1 jadi 'done'\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Rejected: Prompt Manipulasi User Table",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{userToken}}"
+                            }
+                        ],
+                        "url": "{{baseUrl}}/ai/command",
+                        "body": {
+                            "mode": "raw",
+                            "raw":"{\n \"prompt\": \"Hapus user dengan ID 2\"\n}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
